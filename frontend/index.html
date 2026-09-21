@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered personalized content discovery and intelligent advertising platform">
+    <title>Discover AI — Personalized Discovery Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-container">
+                <a href="#" class="nav-logo" onclick="navigate('home')">
+                    <span class="logo-icon">◆</span>
+                    <span class="logo-text">Discover<span class="logo-accent">AI</span></span>
+                </a>
+                <div class="nav-search" id="nav-search">
+                    <input type="text" id="search-input" placeholder="Search content..." autocomplete="off">
+                    <button onclick="handleSearch()" class="search-btn">→</button>
+                </div>
+                <div class="nav-actions">
+                    <span id="nav-user" class="nav-user" style="display:none;">
+                        <button onclick="navigate('profile')" class="nav-link" id="nav-username"></button>
+                        <button onclick="navigate('admin')" class="nav-link nav-admin">Dashboard</button>
+                        <button onclick="handleLogout()" class="btn-outline btn-sm">Logout</button>
+                    </span>
+                    <span id="nav-auth" class="nav-auth">
+                        <button onclick="navigate('login')" class="btn-outline btn-sm">Sign In</button>
+                    </span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="main-content">
+            <!-- Pages are rendered here dynamically -->
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/content.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
