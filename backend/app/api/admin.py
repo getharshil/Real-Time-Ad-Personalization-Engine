@@ -35,3 +35,34 @@ async def campaign_analytics(db: AsyncSession = Depends(get_db)):
 async def category_analytics(db: AsyncSession = Depends(get_db)):
     """Category engagement metrics from cross-table aggregations."""
     return await get_category_analytics(db)
+
+
+@router.post("/seed")
+async def manual_seed(db: AsyncSession = Depends(get_db)):
+    """Manually trigger database seeding and model training."""
+    import subprocess
+    import sys
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info("Manual seed triggered...")
+    try:
+        # Run seed
+        seed_result = subprocess.run(
+            [sys.executable, "-m", "app.db.seed"],
+            capture_output=True, text=True, timeout=300
+        )
+        if seed_result.returncode != 0:
+            return {"status": "error", "message": "Seed failed", "details": seed_result.stderr[-500:]}
+            
+        # Run training
+        train_result = subprocess.run(
+            [sys.executable, "scripts/train_model.py"],
+            capture_output=True, text=True, timeout=120
+        )
+        if train_result.returncode != 0:
+            return {"status": "error", "message": "Training failed", "details": train_result.stderr[-500:]}
+            
+        return {"status": "success", "message": "Database seeded and model trained successfully"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
