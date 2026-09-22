@@ -3,7 +3,7 @@
  * No hardcoded data. Every response comes from real API calls.
  */
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'https://real-time-ad-personalization-engine.onrender.com/api';
 
 function getAuthHeaders() {
     const token = localStorage.getItem('token');
