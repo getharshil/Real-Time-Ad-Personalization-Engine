@@ -36,6 +36,43 @@ async def lifespan(app: FastAPI):
     await init_db()
     logger.info("Database tables initialized")
 
+    # Auto-seed if database is empty (for cloud deployments)
+    try:
+        from app.db.database import async_session
+        from app.db.models import User
+        from sqlalchemy import select, func
+
+        async with async_session() as db:
+            count_result = await db.execute(select(func.count()).select_from(User))
+            user_count = count_result.scalar() or 0
+
+        if user_count == 0:
+            logger.info("Empty database detected — running auto-seed...")
+            import subprocess
+            import sys
+            result = subprocess.run(
+                [sys.executable, "-m", "app.db.seed"],
+                capture_output=True, text=True, timeout=300
+            )
+            if result.returncode == 0:
+                logger.info("Auto-seed completed successfully")
+                # Train ML model after seeding
+                logger.info("Training ML model...")
+                train_result = subprocess.run(
+                    [sys.executable, "scripts/train_model.py"],
+                    capture_output=True, text=True, timeout=120
+                )
+                if train_result.returncode == 0:
+                    logger.info("ML model trained successfully")
+                else:
+                    logger.warning(f"ML training failed: {train_result.stderr[-500:]}")
+            else:
+                logger.warning(f"Auto-seed failed: {result.stderr[-500:]}")
+        else:
+            logger.info(f"Database already has {user_count} users, skipping seed")
+    except Exception as e:
+        logger.warning(f"Auto-seed check failed (non-fatal): {e}")
+
     # Try to load ML model
     try:
         from app.ml.predictor import load_model
